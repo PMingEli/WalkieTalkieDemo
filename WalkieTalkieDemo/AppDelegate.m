@@ -16,6 +16,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    // 控制开屏页时间
+    [NSThread sleepForTimeInterval:3.0];
     return YES;
 }
 

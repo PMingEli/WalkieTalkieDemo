@@ -17,6 +17,7 @@
 		A4ED62F228AA29C7000F08B1 /* WalkieTalkieDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A4ED62F128AA29C7000F08B1 /* WalkieTalkieDemoTests.m */; };
 		A4ED62FC28AA29C7000F08B1 /* WalkieTalkieDemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = A4ED62FB28AA29C7000F08B1 /* WalkieTalkieDemoUITests.m */; };
 		A4ED62FE28AA29C7000F08B1 /* WalkieTalkieDemoUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A4ED62FD28AA29C7000F08B1 /* WalkieTalkieDemoUITestsLaunchTests.m */; };
+		A4ED630F28AA3FC6000F08B1 /* ImageSources.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A4ED630E28AA3FC6000F08B1 /* ImageSources.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +55,7 @@
 		A4ED62F728AA29C7000F08B1 /* WalkieTalkieDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WalkieTalkieDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4ED62FB28AA29C7000F08B1 /* WalkieTalkieDemoUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WalkieTalkieDemoUITests.m; sourceTree = "<group>"; };
 		A4ED62FD28AA29C7000F08B1 /* WalkieTalkieDemoUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WalkieTalkieDemoUITestsLaunchTests.m; sourceTree = "<group>"; };
+		A4ED630E28AA3FC6000F08B1 /* ImageSources.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = ImageSources.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +106,7 @@
 		A4ED62D428AA29C6000F08B1 /* WalkieTalkieDemo */ = {
 			isa = PBXGroup;
 			children = (
+				A4ED630B28AA3F49000F08B1 /* Sources */,
 				A4ED62D528AA29C6000F08B1 /* AppDelegate.h */,
 				A4ED62D628AA29C6000F08B1 /* AppDelegate.m */,
 				A4ED62D828AA29C6000F08B1 /* SceneDelegate.h */,
@@ -134,6 +137,14 @@
 				A4ED62FD28AA29C7000F08B1 /* WalkieTalkieDemoUITestsLaunchTests.m */,
 			);
 			path = WalkieTalkieDemoUITests;
+			sourceTree = "<group>";
+		};
+		A4ED630B28AA3F49000F08B1 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				A4ED630E28AA3FC6000F08B1 /* ImageSources.xcassets */,
+			);
+			path = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -239,6 +250,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4ED630F28AA3FC6000F08B1 /* ImageSources.xcassets in Resources */,
 				A4ED62E528AA29C7000F08B1 /* LaunchScreen.storyboard in Resources */,
 				A4ED62E228AA29C7000F08B1 /* Assets.xcassets in Resources */,
 				A4ED62E028AA29C6000F08B1 /* Main.storyboard in Resources */,
