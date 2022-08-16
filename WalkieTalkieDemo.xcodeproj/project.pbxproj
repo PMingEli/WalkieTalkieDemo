@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9263CC5D38AEE3E7F759315C /* Pods_WalkieTalkieDemoTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85ED8BDEF49245CADBF3AA81 /* Pods_WalkieTalkieDemoTests.framework */; };
 		A4ED62D728AA29C6000F08B1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A4ED62D628AA29C6000F08B1 /* AppDelegate.m */; };
 		A4ED62DA28AA29C6000F08B1 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A4ED62D928AA29C6000F08B1 /* SceneDelegate.m */; };
 		A4ED62DD28AA29C6000F08B1 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A4ED62DC28AA29C6000F08B1 /* ViewController.m */; };
@@ -18,6 +19,8 @@
 		A4ED62FC28AA29C7000F08B1 /* WalkieTalkieDemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = A4ED62FB28AA29C7000F08B1 /* WalkieTalkieDemoUITests.m */; };
 		A4ED62FE28AA29C7000F08B1 /* WalkieTalkieDemoUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A4ED62FD28AA29C7000F08B1 /* WalkieTalkieDemoUITestsLaunchTests.m */; };
 		A4ED630F28AA3FC6000F08B1 /* ImageSources.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A4ED630E28AA3FC6000F08B1 /* ImageSources.xcassets */; };
+		BCDA63AD9070B85AC8538541 /* Pods_WalkieTalkieDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 680BA34EA5DDF29FFF7453DA /* Pods_WalkieTalkieDemo.framework */; };
+		D07BBE08667BF10A9B82D8D7 /* Pods_WalkieTalkieDemo_WalkieTalkieDemoUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62E2260E976C4EE0D7D3E350 /* Pods_WalkieTalkieDemo_WalkieTalkieDemoUITests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +41,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		05DF6E3821E525D2C6254862 /* Pods-WalkieTalkieDemoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WalkieTalkieDemoTests.release.xcconfig"; path = "Target Support Files/Pods-WalkieTalkieDemoTests/Pods-WalkieTalkieDemoTests.release.xcconfig"; sourceTree = "<group>"; };
+		0E09AF2E51FAB91E8471060F /* Pods-WalkieTalkieDemoTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WalkieTalkieDemoTests.debug.xcconfig"; path = "Target Support Files/Pods-WalkieTalkieDemoTests/Pods-WalkieTalkieDemoTests.debug.xcconfig"; sourceTree = "<group>"; };
+		1BAF78D7ABC3C46911F64933 /* Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests.release.xcconfig"; path = "Target Support Files/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests.release.xcconfig"; sourceTree = "<group>"; };
+		39794528B42C8880A31304CD /* Pods-WalkieTalkieDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WalkieTalkieDemo.release.xcconfig"; path = "Target Support Files/Pods-WalkieTalkieDemo/Pods-WalkieTalkieDemo.release.xcconfig"; sourceTree = "<group>"; };
+		4DA7F60BD4F7C435511B9413 /* Pods-WalkieTalkieDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WalkieTalkieDemo.debug.xcconfig"; path = "Target Support Files/Pods-WalkieTalkieDemo/Pods-WalkieTalkieDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		62E2260E976C4EE0D7D3E350 /* Pods_WalkieTalkieDemo_WalkieTalkieDemoUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WalkieTalkieDemo_WalkieTalkieDemoUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		680BA34EA5DDF29FFF7453DA /* Pods_WalkieTalkieDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WalkieTalkieDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		85ED8BDEF49245CADBF3AA81 /* Pods_WalkieTalkieDemoTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WalkieTalkieDemoTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4ED62D228AA29C6000F08B1 /* WalkieTalkieDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WalkieTalkieDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4ED62D528AA29C6000F08B1 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A4ED62D628AA29C6000F08B1 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -56,6 +67,7 @@
 		A4ED62FB28AA29C7000F08B1 /* WalkieTalkieDemoUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WalkieTalkieDemoUITests.m; sourceTree = "<group>"; };
 		A4ED62FD28AA29C7000F08B1 /* WalkieTalkieDemoUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WalkieTalkieDemoUITestsLaunchTests.m; sourceTree = "<group>"; };
 		A4ED630E28AA3FC6000F08B1 /* ImageSources.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = ImageSources.xcassets; sourceTree = "<group>"; };
+		DE61C4CB4C0B3FDEC6B3A3A2 /* Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests.debug.xcconfig"; path = "Target Support Files/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +75,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BCDA63AD9070B85AC8538541 /* Pods_WalkieTalkieDemo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,6 +83,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9263CC5D38AEE3E7F759315C /* Pods_WalkieTalkieDemoTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,12 +91,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D07BBE08667BF10A9B82D8D7 /* Pods_WalkieTalkieDemo_WalkieTalkieDemoUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7F887598D4F197CE26172676 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4DA7F60BD4F7C435511B9413 /* Pods-WalkieTalkieDemo.debug.xcconfig */,
+				39794528B42C8880A31304CD /* Pods-WalkieTalkieDemo.release.xcconfig */,
+				DE61C4CB4C0B3FDEC6B3A3A2 /* Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests.debug.xcconfig */,
+				1BAF78D7ABC3C46911F64933 /* Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests.release.xcconfig */,
+				0E09AF2E51FAB91E8471060F /* Pods-WalkieTalkieDemoTests.debug.xcconfig */,
+				05DF6E3821E525D2C6254862 /* Pods-WalkieTalkieDemoTests.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		A4ED62C928AA29C6000F08B1 = {
 			isa = PBXGroup;
 			children = (
@@ -90,6 +119,8 @@
 				A4ED62F028AA29C7000F08B1 /* WalkieTalkieDemoTests */,
 				A4ED62FA28AA29C7000F08B1 /* WalkieTalkieDemoUITests */,
 				A4ED62D328AA29C6000F08B1 /* Products */,
+				7F887598D4F197CE26172676 /* Pods */,
+				E3C346E5A2DD22643DEDC33A /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -147,6 +178,16 @@
 			path = Sources;
 			sourceTree = "<group>";
 		};
+		E3C346E5A2DD22643DEDC33A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				680BA34EA5DDF29FFF7453DA /* Pods_WalkieTalkieDemo.framework */,
+				62E2260E976C4EE0D7D3E350 /* Pods_WalkieTalkieDemo_WalkieTalkieDemoUITests.framework */,
+				85ED8BDEF49245CADBF3AA81 /* Pods_WalkieTalkieDemoTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -154,9 +195,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A4ED630128AA29C7000F08B1 /* Build configuration list for PBXNativeTarget "WalkieTalkieDemo" */;
 			buildPhases = (
+				02CB1BF21892EFD0F78C01CD /* [CP] Check Pods Manifest.lock */,
 				A4ED62CE28AA29C6000F08B1 /* Sources */,
 				A4ED62CF28AA29C6000F08B1 /* Frameworks */,
 				A4ED62D028AA29C6000F08B1 /* Resources */,
+				E76BA4A3935CDE419F51C4AD /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -171,6 +214,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A4ED630428AA29C7000F08B1 /* Build configuration list for PBXNativeTarget "WalkieTalkieDemoTests" */;
 			buildPhases = (
+				5644322E2CF733C2D28280F1 /* [CP] Check Pods Manifest.lock */,
 				A4ED62E928AA29C7000F08B1 /* Sources */,
 				A4ED62EA28AA29C7000F08B1 /* Frameworks */,
 				A4ED62EB28AA29C7000F08B1 /* Resources */,
@@ -189,9 +233,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A4ED630728AA29C7000F08B1 /* Build configuration list for PBXNativeTarget "WalkieTalkieDemoUITests" */;
 			buildPhases = (
+				29618F5442DBADDEA985CEB8 /* [CP] Check Pods Manifest.lock */,
 				A4ED62F328AA29C7000F08B1 /* Sources */,
 				A4ED62F428AA29C7000F08B1 /* Frameworks */,
 				A4ED62F528AA29C7000F08B1 /* Resources */,
+				D86A7DA86DFBEE20FFA33261 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -272,6 +318,109 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		02CB1BF21892EFD0F78C01CD /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-WalkieTalkieDemo-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		29618F5442DBADDEA985CEB8 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5644322E2CF733C2D28280F1 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-WalkieTalkieDemoTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D86A7DA86DFBEE20FFA33261 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E76BA4A3935CDE419F51C4AD /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-WalkieTalkieDemo/Pods-WalkieTalkieDemo-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-WalkieTalkieDemo/Pods-WalkieTalkieDemo-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-WalkieTalkieDemo/Pods-WalkieTalkieDemo-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A4ED62CE28AA29C6000F08B1 /* Sources */ = {
@@ -449,6 +598,7 @@
 		};
 		A4ED630228AA29C7000F08B1 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4DA7F60BD4F7C435511B9413 /* Pods-WalkieTalkieDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -476,6 +626,7 @@
 		};
 		A4ED630328AA29C7000F08B1 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 39794528B42C8880A31304CD /* Pods-WalkieTalkieDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -503,6 +654,7 @@
 		};
 		A4ED630528AA29C7000F08B1 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0E09AF2E51FAB91E8471060F /* Pods-WalkieTalkieDemoTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -521,6 +673,7 @@
 		};
 		A4ED630628AA29C7000F08B1 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 05DF6E3821E525D2C6254862 /* Pods-WalkieTalkieDemoTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -539,6 +692,7 @@
 		};
 		A4ED630828AA29C7000F08B1 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DE61C4CB4C0B3FDEC6B3A3A2 /* Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -555,6 +709,7 @@
 		};
 		A4ED630928AA29C7000F08B1 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1BAF78D7ABC3C46911F64933 /* Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
