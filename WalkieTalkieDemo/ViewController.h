@@ -6,9 +6,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <UIKit/UIFeedbackGenerator.h>
+#import <AVFoundation/AVFoundation.h>
+@import SYAlertController;
 
-@interface ViewController : UIViewController
-
+@interface ViewController : UIViewController <AVAudioPlayerDelegate>
 
 @end
 

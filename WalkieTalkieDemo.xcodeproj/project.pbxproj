@@ -19,6 +19,9 @@
 		A4ED62FC28AA29C7000F08B1 /* WalkieTalkieDemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = A4ED62FB28AA29C7000F08B1 /* WalkieTalkieDemoUITests.m */; };
 		A4ED62FE28AA29C7000F08B1 /* WalkieTalkieDemoUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A4ED62FD28AA29C7000F08B1 /* WalkieTalkieDemoUITestsLaunchTests.m */; };
 		A4ED630F28AA3FC6000F08B1 /* ImageSources.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A4ED630E28AA3FC6000F08B1 /* ImageSources.xcassets */; };
+		A4ED631428AB95E5000F08B1 /* UIColor+Hex.m in Sources */ = {isa = PBXBuildFile; fileRef = A4ED631328AB95E5000F08B1 /* UIColor+Hex.m */; };
+		A4ED631B28ABB8FB000F08B1 /* WorldVC.m in Sources */ = {isa = PBXBuildFile; fileRef = A4ED631A28ABB8FB000F08B1 /* WorldVC.m */; };
+		A4ED631E28ABB916000F08B1 /* ChannelVC.m in Sources */ = {isa = PBXBuildFile; fileRef = A4ED631D28ABB916000F08B1 /* ChannelVC.m */; };
 		BCDA63AD9070B85AC8538541 /* Pods_WalkieTalkieDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 680BA34EA5DDF29FFF7453DA /* Pods_WalkieTalkieDemo.framework */; };
 		D07BBE08667BF10A9B82D8D7 /* Pods_WalkieTalkieDemo_WalkieTalkieDemoUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62E2260E976C4EE0D7D3E350 /* Pods_WalkieTalkieDemo_WalkieTalkieDemoUITests.framework */; };
 /* End PBXBuildFile section */
@@ -67,6 +70,12 @@
 		A4ED62FB28AA29C7000F08B1 /* WalkieTalkieDemoUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WalkieTalkieDemoUITests.m; sourceTree = "<group>"; };
 		A4ED62FD28AA29C7000F08B1 /* WalkieTalkieDemoUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WalkieTalkieDemoUITestsLaunchTests.m; sourceTree = "<group>"; };
 		A4ED630E28AA3FC6000F08B1 /* ImageSources.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = ImageSources.xcassets; sourceTree = "<group>"; };
+		A4ED631228AB95E5000F08B1 /* UIColor+Hex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIColor+Hex.h"; sourceTree = "<group>"; };
+		A4ED631328AB95E5000F08B1 /* UIColor+Hex.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Hex.m"; sourceTree = "<group>"; };
+		A4ED631928ABB8FB000F08B1 /* WorldVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WorldVC.h; sourceTree = "<group>"; };
+		A4ED631A28ABB8FB000F08B1 /* WorldVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WorldVC.m; sourceTree = "<group>"; };
+		A4ED631C28ABB916000F08B1 /* ChannelVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChannelVC.h; sourceTree = "<group>"; };
+		A4ED631D28ABB916000F08B1 /* ChannelVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChannelVC.m; sourceTree = "<group>"; };
 		DE61C4CB4C0B3FDEC6B3A3A2 /* Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests.debug.xcconfig"; path = "Target Support Files/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -108,7 +117,6 @@
 				0E09AF2E51FAB91E8471060F /* Pods-WalkieTalkieDemoTests.debug.xcconfig */,
 				05DF6E3821E525D2C6254862 /* Pods-WalkieTalkieDemoTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -137,6 +145,8 @@
 		A4ED62D428AA29C6000F08B1 /* WalkieTalkieDemo */ = {
 			isa = PBXGroup;
 			children = (
+				A4ED631628ABB797000F08B1 /* Tabs */,
+				A4ED631128AB9590000F08B1 /* UIColor+Hex */,
 				A4ED630B28AA3F49000F08B1 /* Sources */,
 				A4ED62D528AA29C6000F08B1 /* AppDelegate.h */,
 				A4ED62D628AA29C6000F08B1 /* AppDelegate.m */,
@@ -176,6 +186,42 @@
 				A4ED630E28AA3FC6000F08B1 /* ImageSources.xcassets */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		A4ED631128AB9590000F08B1 /* UIColor+Hex */ = {
+			isa = PBXGroup;
+			children = (
+				A4ED631228AB95E5000F08B1 /* UIColor+Hex.h */,
+				A4ED631328AB95E5000F08B1 /* UIColor+Hex.m */,
+			);
+			path = "UIColor+Hex";
+			sourceTree = "<group>";
+		};
+		A4ED631628ABB797000F08B1 /* Tabs */ = {
+			isa = PBXGroup;
+			children = (
+				A4ED631828ABB7B3000F08B1 /* World */,
+				A4ED631728ABB7A8000F08B1 /* Channel */,
+			);
+			path = Tabs;
+			sourceTree = "<group>";
+		};
+		A4ED631728ABB7A8000F08B1 /* Channel */ = {
+			isa = PBXGroup;
+			children = (
+				A4ED631C28ABB916000F08B1 /* ChannelVC.h */,
+				A4ED631D28ABB916000F08B1 /* ChannelVC.m */,
+			);
+			path = Channel;
+			sourceTree = "<group>";
+		};
+		A4ED631828ABB7B3000F08B1 /* World */ = {
+			isa = PBXGroup;
+			children = (
+				A4ED631928ABB8FB000F08B1 /* WorldVC.h */,
+				A4ED631A28ABB8FB000F08B1 /* WorldVC.m */,
+			);
+			path = World;
 			sourceTree = "<group>";
 		};
 		E3C346E5A2DD22643DEDC33A /* Frameworks */ = {
@@ -427,10 +473,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4ED631E28ABB916000F08B1 /* ChannelVC.m in Sources */,
 				A4ED62DD28AA29C6000F08B1 /* ViewController.m in Sources */,
+				A4ED631428AB95E5000F08B1 /* UIColor+Hex.m in Sources */,
 				A4ED62D728AA29C6000F08B1 /* AppDelegate.m in Sources */,
 				A4ED62E828AA29C7000F08B1 /* main.m in Sources */,
 				A4ED62DA28AA29C6000F08B1 /* SceneDelegate.m in Sources */,
+				A4ED631B28ABB8FB000F08B1 /* WorldVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
