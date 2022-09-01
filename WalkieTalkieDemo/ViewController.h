@@ -8,9 +8,15 @@
 #import <UIKit/UIKit.h>
 #import <UIKit/UIFeedbackGenerator.h>
 #import <AVFoundation/AVFoundation.h>
-@import SYAlertController;
+#import "UIScreen.h"
+#import "MoreSetting/IPSettingVC.h"
+#import "MoreSetting/sender.h"
+#import "MoreSetting/IPSetting.h"
 
-@interface ViewController : UIViewController <AVAudioPlayerDelegate>
+@import SYAlertController;
+@import CocoaAsyncSocket;
+
+@interface ViewController : UIViewController <AVAudioPlayerDelegate, GCDAsyncUdpSocketDelegate>
 
 @end
 

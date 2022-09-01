@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		9263CC5D38AEE3E7F759315C /* Pods_WalkieTalkieDemoTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85ED8BDEF49245CADBF3AA81 /* Pods_WalkieTalkieDemoTests.framework */; };
+		A408504128BF061400A141E4 /* IPSettingVC.m in Sources */ = {isa = PBXBuildFile; fileRef = A408504028BF061400A141E4 /* IPSettingVC.m */; };
+		A408504628BF4A2900A141E4 /* IPSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = A408504528BF4A2900A141E4 /* IPSetting.m */; };
 		A4ED62D728AA29C6000F08B1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A4ED62D628AA29C6000F08B1 /* AppDelegate.m */; };
 		A4ED62DA28AA29C6000F08B1 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A4ED62D928AA29C6000F08B1 /* SceneDelegate.m */; };
 		A4ED62DD28AA29C6000F08B1 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A4ED62DC28AA29C6000F08B1 /* ViewController.m */; };
@@ -52,6 +54,12 @@
 		62E2260E976C4EE0D7D3E350 /* Pods_WalkieTalkieDemo_WalkieTalkieDemoUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WalkieTalkieDemo_WalkieTalkieDemoUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		680BA34EA5DDF29FFF7453DA /* Pods_WalkieTalkieDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WalkieTalkieDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		85ED8BDEF49245CADBF3AA81 /* Pods_WalkieTalkieDemoTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WalkieTalkieDemoTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A408503F28BF061400A141E4 /* IPSettingVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPSettingVC.h; sourceTree = "<group>"; };
+		A408504028BF061400A141E4 /* IPSettingVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IPSettingVC.m; sourceTree = "<group>"; };
+		A408504228BF14A200A141E4 /* UIScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIScreen.h; sourceTree = "<group>"; };
+		A408504328BF48D500A141E4 /* sender.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sender.h; sourceTree = "<group>"; };
+		A408504428BF4A2900A141E4 /* IPSetting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPSetting.h; sourceTree = "<group>"; };
+		A408504528BF4A2900A141E4 /* IPSetting.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IPSetting.m; sourceTree = "<group>"; };
 		A4ED62D228AA29C6000F08B1 /* WalkieTalkieDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WalkieTalkieDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4ED62D528AA29C6000F08B1 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A4ED62D628AA29C6000F08B1 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -120,6 +128,18 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		A408503E28BF05F100A141E4 /* MoreSetting */ = {
+			isa = PBXGroup;
+			children = (
+				A408503F28BF061400A141E4 /* IPSettingVC.h */,
+				A408504028BF061400A141E4 /* IPSettingVC.m */,
+				A408504328BF48D500A141E4 /* sender.h */,
+				A408504428BF4A2900A141E4 /* IPSetting.h */,
+				A408504528BF4A2900A141E4 /* IPSetting.m */,
+			);
+			path = MoreSetting;
+			sourceTree = "<group>";
+		};
 		A4ED62C928AA29C6000F08B1 = {
 			isa = PBXGroup;
 			children = (
@@ -145,6 +165,7 @@
 		A4ED62D428AA29C6000F08B1 /* WalkieTalkieDemo */ = {
 			isa = PBXGroup;
 			children = (
+				A408503E28BF05F100A141E4 /* MoreSetting */,
 				A4ED631628ABB797000F08B1 /* Tabs */,
 				A4ED631128AB9590000F08B1 /* UIColor+Hex */,
 				A4ED630B28AA3F49000F08B1 /* Sources */,
@@ -159,6 +180,7 @@
 				A4ED62E328AA29C7000F08B1 /* LaunchScreen.storyboard */,
 				A4ED62E628AA29C7000F08B1 /* Info.plist */,
 				A4ED62E728AA29C7000F08B1 /* main.m */,
+				A408504228BF14A200A141E4 /* UIScreen.h */,
 			);
 			path = WalkieTalkieDemo;
 			sourceTree = "<group>";
@@ -246,6 +268,7 @@
 				A4ED62CF28AA29C6000F08B1 /* Frameworks */,
 				A4ED62D028AA29C6000F08B1 /* Resources */,
 				E76BA4A3935CDE419F51C4AD /* [CP] Embed Pods Frameworks */,
+				DFDA390EBCE7FBAAF3A31302 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -284,6 +307,7 @@
 				A4ED62F428AA29C7000F08B1 /* Frameworks */,
 				A4ED62F528AA29C7000F08B1 /* Resources */,
 				D86A7DA86DFBEE20FFA33261 /* [CP] Embed Pods Frameworks */,
+				BABFB02981FCA803983B0811 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -432,6 +456,23 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		BABFB02981FCA803983B0811 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		D86A7DA86DFBEE20FFA33261 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -447,6 +488,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests/Pods-WalkieTalkieDemo-WalkieTalkieDemoUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DFDA390EBCE7FBAAF3A31302 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-WalkieTalkieDemo/Pods-WalkieTalkieDemo-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-WalkieTalkieDemo/Pods-WalkieTalkieDemo-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-WalkieTalkieDemo/Pods-WalkieTalkieDemo-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E76BA4A3935CDE419F51C4AD /* [CP] Embed Pods Frameworks */ = {
@@ -473,9 +531,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A408504128BF061400A141E4 /* IPSettingVC.m in Sources */,
 				A4ED631E28ABB916000F08B1 /* ChannelVC.m in Sources */,
 				A4ED62DD28AA29C6000F08B1 /* ViewController.m in Sources */,
 				A4ED631428AB95E5000F08B1 /* UIColor+Hex.m in Sources */,
+				A408504628BF4A2900A141E4 /* IPSetting.m in Sources */,
 				A4ED62D728AA29C6000F08B1 /* AppDelegate.m in Sources */,
 				A4ED62E828AA29C7000F08B1 /* main.m in Sources */,
 				A4ED62DA28AA29C6000F08B1 /* SceneDelegate.m in Sources */,
@@ -569,6 +629,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -627,6 +688,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -654,11 +716,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PC8ALQ6DAN;
+				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WalkieTalkieDemo/Info.plist;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = microphoneDesciption;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -669,7 +734,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ming.WalkieTalkieDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -682,11 +747,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PC8ALQ6DAN;
+				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WalkieTalkieDemo/Info.plist;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = microphoneDesciption;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -697,7 +765,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ming.WalkieTalkieDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

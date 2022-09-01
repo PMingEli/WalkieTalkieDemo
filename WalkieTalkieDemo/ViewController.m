@@ -7,26 +7,45 @@
 
 #import "ViewController.h"
 #import "UIColor+Hex/UIColor+Hex.h"
+#import "MoreSetting/IPSettingVC.h"
+
+#import <SystemConfiguration/CaptiveNetwork.h>
+@import SBWatcher;
 
 
-#define SCREEN_HEIGHT self.view.frame.size.height
-#define SCREEN_WIDTH self.view.frame.size.width
+#import <ifaddrs.h>
+#import <arpa/inet.h>
+#import <sys/sockio.h>
+#import <sys/ioctl.h>
+//
+#include <sys/socket.h> // Per msqr
+#include <sys/sysctl.h>
+#include <net/if.h>
+#include <net/if_dl.h>
+
+#define IOS_CELLULAR    @"pdp_ip0"
+#define IOS_WIFI        @"en0"
+//#define IOS_VPN       @"utun0"
+#define IP_ADDR_IPv4    @"ipv4"
+#define IP_ADDR_IPv6    @"ipv6"
+#define maxData 9206
+
+
+
 
 @interface ViewController ()
 
-@property(nonatomic,assign)CFAbsoluteTime touchTime;
-@property(nonatomic,assign)CFAbsoluteTime startTime;
-
-@property (nonatomic, strong)UIImageView* playImageV;
-@property (nonatomic, strong)UIButton* button;
-@property (nonatomic, strong)UIView* tabView;
-@property (nonatomic, strong)UIButton* switchBtn;
-@property (nonatomic, strong)UIButton* mojiBtn;
-@property BOOL isTalk;
-@property (nonatomic, strong)UITextField* inputMsg;
 @property (nonatomic, strong)UIButton* inputVoice;
 @property (nonatomic, strong)UIButton* playBtn;
+@property (nonatomic, strong)UIButton* moreBtn;
+//@property (nonatomic, strong)UITextField* deviceIP;
+@property (nonatomic, strong)UILabel* deviceIP;
+@property (nonatomic, strong)NSString* targetIP;
+@property (nonatomic, strong)NSString* localPort;
+@property (nonatomic, strong)NSString* remotePort;
 
+//主页
+//@property (nonatomic) MainView* mainView;
 //播放器
 @property (nonatomic, strong) AVAudioPlayer *player;
 //
@@ -38,11 +57,11 @@
 //时间
 @property (nonatomic, strong) NSTimer *timer;
 
-@property (nonatomic, strong) NSMutableArray *meterTable;
-
-@property (nonatomic) float mScaleFactor;
-
 @property (nonatomic, strong) UIImpactFeedbackGenerator* impactHeavy;
+
+@property (nonatomic, strong) GCDAsyncUdpSocket *udpSocket;
+
+@property (nonatomic, strong) NSMutableDictionary* remoteData;
 
 @end
 
@@ -53,45 +72,44 @@
 @synthesize recorder = _recorder;
 @synthesize progress = _progress;
 @synthesize timer = _timer;
-@synthesize meterTable = _meterTable;
-@synthesize mScaleFactor = _mScaleFactor;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    //注册观察者
+    [[SBWatcherManager shareManager] registWatcher];
+    
     [self.view setBackgroundColor:[UIColor colorWithHexString:@"#ededed"]];
     // Do any additional setup after loading the view.
     [self setUpAudioObjects];
     
     [self createUI];
     
+    self.udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(IPSettingChanged) name:@"IPSettingChanged" object:nil];
 }
 
 - (void)setUpAudioObjects
 {
-    [self setUpMeterTable];
     [self setUpAudioSession];
     [self setUpRecorder];
     [self setUpProgress];
     
 }
 
-- (void)setUpMeterTable
-{
-    float inMinDecibels = -80.;
-    float inRoot = 2.;
-    double minAmp = pow(10., 0.05 * inMinDecibels);
-    double ampRange = 1. - minAmp;
-    double invAmpRange = 1. / ampRange;
-    double rroot = 1. / inRoot;
-    self.meterTable = [[NSMutableArray alloc] initWithCapacity:400];
-    float mDecibelResolution = inMinDecibels/399;
-    self.mScaleFactor = 1./mDecibelResolution;
+-(void) IPSettingChanged{
+    IPSetting* ip = [IPSetting sharedInstance];
+    self.targetIP = ip.targetIP;
+    self.localPort = ip.localPort;
+    self.remotePort = ip.remotePort;
+    NSLog(@"targetIP:%@",self.targetIP);
     
-    for (size_t i = 0; i < 400; ++i) {
-        double decibels = i * mDecibelResolution;
-        double amp = pow(10., 0.05 * decibels);
-        double adjAmp = (amp - minAmp) * invAmpRange;
-        [self.meterTable setObject:@(pow(adjAmp, rroot)) atIndexedSubscript:i];
+    NSError * error = nil;
+    [self.udpSocket bindToPort:[self.localPort integerValue] error:&error];
+    if (error) {//监听错误打印错误信息
+        NSLog(@"error:%@",error);
+    }else {//监听成功则开始接收信息
+        NSLog(@"接收数据");
+        [self.udpSocket beginReceiving:&error];
     }
 }
 
@@ -114,6 +132,7 @@
 - (void)setUpRecorder
 {
     NSURL *fileURL = [NSURL URLWithString:[NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.m4a"]];
+    //    NSString *wavRecordFilePath = [NSTemporaryDirectory()stringByAppendingPathComponent:@"WAVtemporaryRadio.wav"];
     self.recorder = [[AVAudioRecorder alloc] initWithURL:fileURL
                                                 settings:[self getRecordSettingsDictionary]
                                                    error:nil];
@@ -132,95 +151,32 @@
 
 - (NSDictionary *)getRecordSettingsDictionary
 {
-    AudioChannelLayout channelLayout;
-    memset(&channelLayout, 0, sizeof(AudioChannelLayout));
-    channelLayout.mChannelLayoutTag = kAudioChannelLayoutTag_Stereo;
+    //    AudioChannelLayout channelLayout;
+    //    memset(&channelLayout, 0, sizeof(AudioChannelLayout));
+    //    channelLayout.mChannelLayoutTag = kAudioChannelLayoutTag_Stereo;
     return @{AVFormatIDKey: @(kAudioFormatMPEG4AAC),
              AVSampleRateKey: @44100,
-             AVNumberOfChannelsKey: @2,
-             AVLinearPCMBitDepthKey:@32,
-             AVEncoderAudioQualityKey:@(AVAudioQualityMax),
+             AVNumberOfChannelsKey: @1,
+             AVLinearPCMBitDepthKey:@8,
+             AVEncoderAudioQualityKey:@(AVAudioQualityLow),
              AVEncoderBitRateKey: @128000,
-             AVChannelLayoutKey: [NSData dataWithBytes:&channelLayout
-                                                length:sizeof(AudioChannelLayout)]};
+             //             AVChannelLayoutKey: [NSData dataWithBytes:&channelLayout
+             //                                                length:sizeof(AudioChannelLayout)]
+    };
+    //    return @{ AVSampleRateKey        : @8000.0,                      // 采样率
+    //              AVFormatIDKey          : @(kAudioFormatLinearPCM),     // 音频格式
+    //              AVLinearPCMBitDepthKey : @16,                          // 采样位数 默认 16
+    //              AVNumberOfChannelsKey  : @1                            // 通道的数目
+    //    };
 }
 
 - (void)createUI {
-    _isTalk = YES;
     
-    _tabView = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-60-44, SCREEN_WIDTH, 60)];
-    [_tabView setBackgroundColor:[UIColor colorWithHexString:@"#f6f6f6"]];
-    
-    _button = [[UIButton alloc] init];
-    //    UIEdgeInsets insets = self.view.safeAreaInsets;
-    //    [_button setFrame:CGRectMake(insets.left+50, SCREEN_HEIGHT-insets.bottom-50-44, SCREEN_WIDTH-insets.left-insets.right-50, 50)];
-    [_button setFrame:CGRectMake(50, 10, SCREEN_WIDTH-100, 40)];
-    [_button setTitle:@"按住 说话" forState:UIControlStateNormal];
-    [_button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    //    [_button setBackgroundColor:[UIColor grayColor]];
-    [_button addTarget:self action:@selector(btnTouchDownClick:) forControlEvents:UIControlEventTouchDown];
-    [_button addTarget:self action:@selector(btnTouchUpClick:) forControlEvents:(UIControlEventTouchUpInside|UIControlEventTouchUpOutside)];
-    [_button.layer setCornerRadius:10.0];
-    [_button.layer setMasksToBounds:YES];
-    [_button setBackgroundColor:[UIColor whiteColor]];
-    //    [_button.layer setBorderWidth:2];
-    //    [self.view addSubview:_button];
-    [_tabView addSubview:_button];
-    
-    _playImageV = [[UIImageView alloc] init];
-    _playImageV.frame = CGRectMake(SCREEN_WIDTH/2-50, SCREEN_HEIGHT-350, 100, 100);
-    [self.view addSubview:_playImageV];
-    
-    // 创建图片集
-    NSMutableArray *imageArray = [NSMutableArray arrayWithCapacity:0];
-    
-    for (NSInteger index = 0; index < 5; index++) {
-        NSString *image_name = [NSString stringWithFormat:@"yuyin_%ld.jpg", (long)index];
-        UIImage *tempImage = [UIImage imageNamed:image_name];
-        // 添加图片
-        [imageArray addObject:tempImage];
-    }
-    
-    // 播放图片集
-    // 设置播放的图片集（需将图片添加到数组 imageArray 中）
-    _playImageV.animationImages = imageArray;
-    // 设置播放整个图片集的时间
-    _playImageV.animationDuration = 0.8;
-    // 设置循环播放次数，默认为 0 一直循环
-    _playImageV.animationRepeatCount = 0;
-    
-    _switchBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 5, 50, 50)];
-    [_switchBtn setImage:[UIImage imageNamed:@"keyboard"] forState:UIControlStateNormal];
-    [_switchBtn addTarget:self action:@selector(btnSwitchClick:) forControlEvents:UIControlEventTouchUpInside];
-    
-    [_tabView addSubview:_switchBtn];
-    
-    _mojiBtn = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH-50, 5, 50, 50)];
-    [_mojiBtn setImage:[UIImage imageNamed:@"moji"] forState:UIControlStateNormal];
-    
-    [_tabView addSubview:_mojiBtn];
-    
-    _inputMsg = [[UITextField alloc] initWithFrame:CGRectMake(50, 10, SCREEN_WIDTH-100, 40)];
-    [_inputMsg.layer setCornerRadius:10.0];
-    [_inputMsg setBackgroundColor:[UIColor whiteColor]];
-    _inputMsg.hidden = YES;
-    
-    [_tabView addSubview:_inputMsg];
-    
-    //    [self.view addSubview:_tabView];
-    
-    self.inputVoice = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2-50, SCREEN_HEIGHT*3/4, 100, 100)];
+    self.inputVoice = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2-50, SCREEN_HEIGHT*3/4-50, 100, 100)];
     [self.inputVoice setImage:[UIImage imageNamed:@"voiceInput"] forState:UIControlStateNormal];
     [self.inputVoice setBackgroundColor:[UIColor colorWithHexString:@"#f6f6f6"]];
     [self.inputVoice addTarget:self action:@selector(btnTouchDownClick:) forControlEvents:UIControlEventTouchDown];
     [self.inputVoice addTarget:self action:@selector(btnTouchUpClick:) forControlEvents:(UIControlEventTouchUpInside|UIControlEventTouchUpOutside)];
-    //    self.inputVoice = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"voiceInput"] highlightedImage:[UIImage imageNamed:@"voiceInput_s"]];
-    //    [self.inputVoice setFrame:CGRectMake(SCREEN_WIDTH/2-50, SCREEN_HEIGHT*3/4, 100, 100)];
-    //    [self.inputVoice setBackgroundColor:[UIColor colorWithHexString:@"#f6f6f6"]];
-    //    self.inputVoice.userInteractionEnabled = YES;
-    //    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressAction:)];
-    //    [longPress setMinimumPressDuration:0];
-    //    [self.inputVoice addGestureRecognizer:longPress];
     [self.inputVoice.layer setCornerRadius:50.0];
     [self.inputVoice.layer setBorderWidth:2];
     [self.inputVoice.layer setShadowOffset:CGSizeMake(1, 1)];
@@ -236,40 +192,22 @@
     [self.playBtn.layer setBorderWidth:2];
     [self.view addSubview:self.playBtn];
     
+    
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"more"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoSetting)];
+    self.navigationItem.rightBarButtonItem = item;
+    
+    NSString* ip = [self getIPAddress:YES];
+    
+    self.deviceIP = [[UILabel alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/5, SCREEN_HEIGHT-37-50, SCREEN_WIDTH*3/5, 50)];
+    [self.view addSubview:self.deviceIP];
+    self.deviceIP.font = [UIFont systemFontOfSize:20];
+    self.deviceIP.textAlignment = NSTextAlignmentCenter;
+    self.deviceIP.enabled = NO;
+    self.deviceIP.text = [@"本机IP：" stringByAppendingString:ip];
+    
     self.impactHeavy = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleHeavy];
     
     
-}
-
-
-#pragma mark- longPress(长按手势)
-- (void)longPressAction:(UILongPressGestureRecognizer *)longPress{
-    if (longPress.state == UIGestureRecognizerStateBegan) {
-        NSLog(@"检测到长按手势开始的时候执行");
-        [self.inputVoice setHighlighted:YES];
-        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-        dispatch_sync(queue, ^{
-            //            [self.impactHeavy impactOccurredWithIntensity:1.0];
-            //            [_impactHeavy prepare];
-            [_impactHeavy impactOccurred];
-            [self startRecording];
-        });
-    }
-    else if (longPress.state == UIGestureRecognizerStateEnded) {
-        [self.inputVoice setHighlighted:NO];
-        NSLog(@"长按手势结束的时候执行");
-        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-        dispatch_sync(queue, ^{
-            [self stopRecording];
-            
-            if(self.player.duration<1){
-                [self showToast:@"说话时间太短"];
-                self.player = nil;
-                return;
-            }
-        });
-    }
-    //    NSLog(@"检测到了长按手势");
 }
 
 
@@ -277,10 +215,15 @@
 // 按钮按下事件
 - (void)btnTouchDownClick:(UIButton *)sender
 {
+    NSArray* files = [self allFilesAtPath:NSTemporaryDirectory()];
+    for(id file in files){
+        [[NSFileManager defaultManager] removeItemAtPath:file error:nil];
+    }
     [_impactHeavy prepare];
     [_impactHeavy impactOccurred];
     [self.inputVoice setImage:[UIImage imageNamed:@"voiceInput_s"] forState:UIControlStateHighlighted];
     [self.inputVoice setBackgroundColor:[UIColor colorWithHexString:@"#f6f6f6" alpha:0.6]];
+    //    [self.mainView inputVoiceSelected];
     NSLog(@"按钮按下事件");
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
     dispatch_sync(queue, ^{
@@ -294,25 +237,83 @@
     // 停止播放动画
     [self.inputVoice setBackgroundColor:[UIColor colorWithHexString:@"#f6f6f6"]];
     self.progress.progress=0;
+    //    [self.mainView inputVoiceUnselected];
+    //    self.mainView.progress.progress = 0;
     NSLog(@"按钮抬起事件");
+    [self stopRecording];
+    if(self.player.duration<1){
+        [self showToast:@"说话时间太短"];
+        self.player = nil;
+        return;
+    }
+    //    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+    //    dispatch_sync(queue, ^{
+    //        [self stopRecording];
+    //        if(self.player.duration<1){
+    //            [self showToast:@"说话时间太短"];
+    //            self.player = nil;
+    //            return;
+    //        }
+    //    });
+    //TODO:发送音频
+    //暂存录音文件路径
+    //    NSString *wavRecordFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"WAVtemporaryRadio.wav"];
+    //    NSString *amrRecordFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"AMRtemporaryRadio.amr"];
+    
+    //重点:把wav录音文件转换成amr文件,用于网络传输.amr文件大小是wav文件的十分之一左右
+    //    [EMVoiceConverter wavToAmr:wavRecordFilePath amrSavePath:amrRecordFilePath];
+    //wave_file_to_amr_file([wavRecordFilePath cStringUsingEncoding:NSUTF8StringEncoding],[amrRecordFilePath cStringUsingEncoding:NSUTF8StringEncoding], 1, 16);
+    
+    //返回amr音频文件Data,用于传输或存储
+    //    NSData *cacheAudioData = [NSData dataWithContentsOfFile:amrRecordFilePath];
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
     dispatch_sync(queue, ^{
-        [self stopRecording];
-        if(self.player.duration<1){
-            [self showToast:@"说话时间太短"];
-            self.player = nil;
-            return;
+        NSURL* fileURL = [NSURL URLWithString:[NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.m4a"]];
+        NSLog(@"fileURL:%@",fileURL);
+        NSData* audioData = [NSData dataWithContentsOfFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.m4a"]];
+        NSData* testData = [@"testtest" dataUsingEncoding:NSUTF8StringEncoding];
+        if([IPSetting sharedInstance].targetIP){
+            if(audioData.length>maxData){
+                [self sendAllData:audioData];
+            }else{
+                [self.udpSocket sendData:audioData toHost:self.targetIP port:[self.remotePort integerValue] withTimeout:-1 tag:0];
+            }
+        }else{
+            NSLog(@"host为nil");
         }
     });
-    //TODO:发送音频
-    
-    
+}
+
+- (BOOL) sendAllData: (NSData *)data{
+    unsigned long count = data.length / maxData;
+    NSData *tmp = data;
+    NSMutableData* startFlag;
+    unsigned long len = 0;
+    for(int i=0;i<=count;i++){
+        len = i == count? data.length - i*maxData :maxData;
+        tmp = [data subdataWithRange: NSMakeRange(i*maxData, len)];
+        NSString* str = [self getMaxLength:[@"" stringByAppendingFormat:@"%d-%lu",i,count]];
+        startFlag = [[str dataUsingEncoding:NSUTF8StringEncoding] mutableCopy];
+        [startFlag appendData:tmp];
+        [self.udpSocket sendData:startFlag toHost:self.targetIP port:[self.remotePort integerValue] withTimeout:-1 tag:0];
+    }
+    return NO;
+}
+
+-(NSString *)getMaxLength:(NSString *)str{
+    NSString *result = str;
+    for(unsigned long i=str.length;i<10;i++){
+        result = [result stringByAppendingString:@"a"];
+    }
+    NSLog(@"result: %@",result);
+    return result;
 }
 
 - (void)updateProgress:(NSTimer *)timer{
     NSTimeInterval duration = self.player.duration;
     NSTimeInterval currentTime = self.player.currentTime;
     [self.progress setProgress:(float)(currentTime/duration) animated:YES];
+    //    [self.mainView.progress setProgress:(float)(currentTime/duration) animated:YES];
     NSLog(@"%f",(float)(currentTime/duration));
 }
 
@@ -322,31 +323,54 @@
     [self.timer invalidate]; //NSTimer暂停   invalidate  使...无效;
     if(self.progress.progress<1){
         [self.progress setProgress:1.0 animated:YES];
+        //        [self.mainView.progress setProgress:1.0 animated:YES];
     }
 }
 
 //播放按钮
 - (void)playButtonPressed {
-    NSLog(@"点击了播放按钮");
-    self.progress.hidden = NO;
-    self.progress.progress = 0;
-    @try {
-        if (!self.player.isPlaying && !self.recorder.isRecording) {
-            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-            dispatch_async(queue, ^{
-                [self.session setActive:YES error:nil];
-                [self.player prepareToPlay];
-                [self.player setVolume:1.0f];
-                [self.player play];
-            });
-            self.timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(updateProgress:) userInfo:nil repeats:YES];
-        }
-    } @catch (NSException *exception) {
-        NSLog(@"%@",exception);
-    } @finally {
-        [self.recorder deleteRecording];
-        NSLog(@"录音删除成功");
+    NSURL *fileURL = [NSURL URLWithString:[NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.m4a"]];
+    //    NSString *wavRecordFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"WAVtemporaryRadio.wav"];
+    //    NSLog(@"文件大小: %@", [[[NSFileManager defaultManager] attributesOfItemAtPath:fileURL error:nil] objectForKey:NSFileSize]);
+    NSError *error;
+    self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:fileURL error:&error];
+    if (self.player == nil) {
+        NSLog(@"AudioPlayer did not load properly: %@", [error description]);
     }
+    self.player.delegate = self;
+    self.player.meteringEnabled = YES;
+    NSLog(@"点击了播放按钮");
+    if(self.player!=nil){
+        self.progress.hidden = NO;
+        self.progress.progress = 0;
+        //    self.mainView.progress.hidden = NO;
+        //    [self.mainView.progress setProgress:0 animated:YES];
+        @try {
+            if (!self.player.isPlaying && !self.recorder.isRecording) {
+                dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+                dispatch_async(queue, ^{
+                    [self.session setActive:YES error:nil];
+                    [self.player prepareToPlay];
+                    [self.player setVolume:1.0f];
+                    [self.player play];
+                });
+                self.timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(updateProgress:) userInfo:nil repeats:YES];
+            }
+        } @catch (NSException *exception) {
+            NSLog(@"%@",exception);
+        } @finally {
+            [self.recorder deleteRecording];
+            NSLog(@"录音删除成功");
+        }
+    }else{
+        [self showToast:@"播放器初始化失败"];
+    }
+}
+
+- (void) gotoSetting{
+    IPSettingVC* ipsetting = [[IPSettingVC alloc] init];
+    //    ipsetting.delegate = self;
+    [self.navigationController pushViewController:ipsetting animated:NO];
 }
 
 //开始录音
@@ -382,7 +406,13 @@
     [self.session setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
     
     NSURL *fileURL = [NSURL URLWithString:[NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.m4a"]];
-    self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:fileURL error:nil];
+    //    NSString *wavRecordFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"WAVtemporaryRadio.wav"];
+    //    NSLog(@"文件大小: %@", [[[NSFileManager defaultManager] attributesOfItemAtPath:fileURL error:nil] objectForKey:NSFileSize]);
+    NSError *error;
+    self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:fileURL error:&error];
+    if (self.player == nil) {
+        NSLog(@"AudioPlayer did not load properly: %@", [error description]);
+    }
     self.player.delegate = self;
     self.player.meteringEnabled = YES;
 }
@@ -392,34 +422,12 @@
     //获取分贝  基本在0-1之间 可能超过1
     CGFloat lowPassResults = pow(10, (0.05 * [self.recorder peakPowerForChannel:0]));
     //分成10个等级
-    self.progress.progress = lowPassResults;
-}
-
-// 切换按钮按下事件
-- (void)btnSwitchClick:(UIButton *)sender
-{
-    // 切换键盘输入
-    _isTalk = !_isTalk;
-    if(_isTalk){
-        [self textFieldDidBeginEditing:self.inputMsg];
-        [_switchBtn setImage:[UIImage imageNamed:@"talk"]  forState:UIControlStateNormal];
-        _button.hidden = YES;
-        _inputMsg.hidden = NO;
-    }
-    else{
-        [self textFieldDidEndEditing:self.inputMsg];
-        [_switchBtn setImage:[UIImage imageNamed:@"keyboard"]  forState:UIControlStateNormal];
-        _inputMsg.hidden = YES;
-        _button.hidden = NO;
-    }
-    //TODO:
+    [self.progress setProgress:lowPassResults animated:YES];
 }
 
 - (void)showToast:(NSString *) msg {
     //初始化弹窗
     SYAlertController *alert = [SYAlertController alertControllerWithTitle:@"" message:msg image:@"warning"];
-    //    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil];
-    //    [alert addAction:ok];
     [self presentViewController:alert animated:YES completion:^{
         [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(dismissAlertController) userInfo:nil repeats:NO];
     }];
@@ -431,26 +439,172 @@
     }];
 }
 
-//点击输入框界面跟随键盘上移
--(void)textFieldDidBeginEditing:(UITextField *)textField {
+//获取ip地址
+//获取设备当前网络IP地址
+- (NSString *)getIPAddress:(BOOL)preferIPv4
+{
+    NSArray *searchArray = preferIPv4 ?
+    @[ /*IOS_VPN @"/" IP_ADDR_IPv4, IOS_VPN @"/" IP_ADDR_IPv6,*/ IOS_WIFI @"/" IP_ADDR_IPv4, IOS_WIFI @"/" IP_ADDR_IPv6, IOS_CELLULAR @"/" IP_ADDR_IPv4, IOS_CELLULAR @"/" IP_ADDR_IPv6 ] :
+    @[ /*IOS_VPN @"/" IP_ADDR_IPv6, IOS_VPN @"/" IP_ADDR_IPv4,*/ IOS_WIFI @"/" IP_ADDR_IPv6, IOS_WIFI @"/" IP_ADDR_IPv4, IOS_CELLULAR @"/" IP_ADDR_IPv6, IOS_CELLULAR @"/" IP_ADDR_IPv4 ] ;
     
-    CGRect frame = _tabView.frame;
-    int offSet = frame.origin.y+50 - (self.view.frame.size.height - 375.0);
-    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
-    [UIView setAnimationDuration:0.5f];
-    //将视图的Y坐标向上移动offset个单位，以使线面腾出开的地方用于软键盘的显示
-    if (offSet > 0) {
-        self.view.frame = CGRectMake(0.0f, -offSet, self.view.frame.size.width, self.view.frame.size.height);
-        [UIView commitAnimations];
+    NSDictionary *addresses = [self getIPAddresses];
+    NSLog(@"addresses: %@", addresses);
+    
+    __block NSString *address;
+    [searchArray enumerateObjectsUsingBlock:^(NSString *key, NSUInteger idx, BOOL *stop)
+     {
+        address = addresses[key];
+        if(address) *stop = YES;
+    } ];
+    return address ? address : @"0.0.0.0";
+}
+
+//获取所有相关IP信息
+- (NSDictionary *)getIPAddresses
+{
+    NSMutableDictionary *addresses = [NSMutableDictionary dictionaryWithCapacity:8];
+    
+    // retrieve the current interfaces - returns 0 on success
+    struct ifaddrs *interfaces;
+    if(!getifaddrs(&interfaces)) {
+        // Loop through linked list of interfaces
+        struct ifaddrs *interface;
+        for(interface=interfaces; interface; interface=interface->ifa_next) {
+            if(!(interface->ifa_flags & IFF_UP) /* || (interface->ifa_flags & IFF_LOOPBACK) */ ) {
+                continue; // deeply nested code harder to read
+            }
+            const struct sockaddr_in *addr = (const struct sockaddr_in*)interface->ifa_addr;
+            char addrBuf[ MAX(INET_ADDRSTRLEN, INET6_ADDRSTRLEN) ];
+            if(addr && (addr->sin_family==AF_INET || addr->sin_family==AF_INET6)) {
+                NSString *name = [NSString stringWithUTF8String:interface->ifa_name];
+                NSString *type;
+                if(addr->sin_family == AF_INET) {
+                    if(inet_ntop(AF_INET, &addr->sin_addr, addrBuf, INET_ADDRSTRLEN)) {
+                        type = IP_ADDR_IPv4;
+                    }
+                } else {
+                    const struct sockaddr_in6 *addr6 = (const struct sockaddr_in6*)interface->ifa_addr;
+                    if(inet_ntop(AF_INET6, &addr6->sin6_addr, addrBuf, INET6_ADDRSTRLEN)) {
+                        type = IP_ADDR_IPv6;
+                    }
+                }
+                if(type) {
+                    NSString *key = [NSString stringWithFormat:@"%@/%@", name, type];
+                    addresses[key] = [NSString stringWithUTF8String:addrBuf];
+                }
+            }
+        }
+        // Free memory
+        freeifaddrs(interfaces);
     }
+    return [addresses count] ? addresses : nil;
 }
 
-//输入框编辑完成以后，将视图恢复到原始状态
-
--(void)textFieldDidEndEditing:(UITextField *)textField {
-    self.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
+- (void)udpSocket:(GCDAsyncUdpSocket *)sock didNotSendDataWithTag:(long)tag dueToError:(NSError *)error{
+    NSLog(@"发送失败");
 }
 
+- (void)udpSocket:(GCDAsyncUdpSocket *)sock didNotConnect:(NSError *)error{
+    NSLog(@"连接失败");
+}
 
+- (void)udpSocket:(GCDAsyncUdpSocket *)sock didSendDataWithTag:(long)tag{
+    NSLog(@"发送成功");
+//    NSError *error;
+//    [[NSFileManager defaultManager] removeItemAtPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.m4a"] error:&error];
+}
+
+- (void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(id)filterContext{
+    
+    //    NSLog(@"接收到%@的数据",address);
+    NSString *ip = [GCDAsyncUdpSocket hostFromAddress:address];
+    
+    uint16_t port = [GCDAsyncUdpSocket portFromAddress:address];
+    
+    //    NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    // 继续来等待接收下一次消息
+//    NSLog(@"收到数据 [%@:%d]", ip, port);
+    NSMutableData* msg;
+    
+//    if(data.length<maxData+10&&msg == nil){
+//        msg = [NSMutableData dataWithData:data];
+//        NSString *aacPlayerFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.m4a"];
+//
+//        [msg writeToFile:aacPlayerFilePath atomically:YES];
+//        [msg setLength:0];
+//
+//        //    NSLog(@"收到数据 [%@:%d] %@", ip, port, s);
+//
+//        NSError *error;
+//        self.player = [[AVAudioPlayer alloc] initWithData:[NSData dataWithContentsOfFile:aacPlayerFilePath] error:&error];
+//        [self.player prepareToPlay];
+//        [self.player play];
+//    }else{
+        NSData* ten = [data subdataWithRange:NSMakeRange(0, 10)];
+        NSString* str = [[NSString alloc] initWithData:ten encoding:NSUTF8StringEncoding];
+        NSLog(@"str: %@",str);
+        str = [str stringByReplacingOccurrencesOfString:@"a" withString:@""];
+        
+        NSArray* array = [str componentsSeparatedByString:@"-"];
+        int num = [array[1] integerValue];
+        NSData *audioData = [data subdataWithRange:NSMakeRange(10, data.length-10)];
+        
+        NSString *aacPlayerFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[array[0] stringByAppendingString:@".m4a"]];
+        
+        [audioData writeToFile:aacPlayerFilePath atomically:YES];
+        
+        NSArray* files = [self allFilesAtPath:NSTemporaryDirectory()];
+
+        if(files.count==num+2){
+            NSLog(@"%@",files);
+            NSMutableData* playData = [[NSMutableData alloc] initWithLength:0];
+            NSArray *array = [files sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2){
+                return [[obj1 lowercaseString] compare:[obj2 lowercaseString]];
+            }];
+            for(id file in array){
+                if([file containsString:@"temp.m4a"]){
+                    continue;
+                }
+                NSData* tmp = [NSData dataWithContentsOfFile:file];
+//                [playData appendData:tmp];
+                [playData appendBytes:tmp.bytes length:tmp.length];
+                NSLog(@"playData的长度为 %lu Byte",playData.length);
+            }
+            [playData writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.m4a"] atomically:YES];
+            
+            
+//            [msg writeToFile:aacPlayerFilePath atomically:YES];
+//            [msg setLength:0];
+//
+//            //    NSLog(@"收到数据 [%@:%d] %@", ip, port, s);
+//
+            NSError *error;
+            self.player = [[AVAudioPlayer alloc] initWithData:playData error:&error];
+            [self.player prepareToPlay];
+            [self.player play];
+        }
+//    }
+}
+
+- (void)udpSocketDidClose:(GCDAsyncUdpSocket *)sock withError:(NSError *)error{
+    NSLog(@"udpSocketDidClose:%@",error);
+}
+
+- (NSArray*)allFilesAtPath:(NSString*)dirString {
+    NSMutableArray* array = [NSMutableArray arrayWithCapacity:10];
+    NSFileManager* fileMgr = [NSFileManager defaultManager];
+    NSArray* tempArray = [fileMgr contentsOfDirectoryAtPath:dirString error:nil];
+    for (NSString* fileName in tempArray) {
+        BOOL flag = YES;
+        NSString* fullPath = [dirString stringByAppendingPathComponent:fileName];
+        if ([fileMgr fileExistsAtPath:fullPath isDirectory:&flag]) {
+            if (!flag) {
+                [array addObject:fullPath];
+            }
+        }
+    }
+    return array;
+}
 
 @end
