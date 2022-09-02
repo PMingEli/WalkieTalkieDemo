@@ -8,9 +8,8 @@
 #import <UIKit/UIKit.h>
 #import <UIKit/UIFeedbackGenerator.h>
 #import <AVFoundation/AVFoundation.h>
-#import "UIScreen.h"
+#import "ToolKit/UIScreen.h"
 #import "MoreSetting/IPSettingVC.h"
-#import "MoreSetting/sender.h"
 #import "MoreSetting/IPSetting.h"
 
 @import SYAlertController;

@@ -15,9 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong)NSString* localPort;
 @property (nonatomic, strong)NSString* remotePort;
 
-+ (instancetype)allocWithZone:(struct _NSZone *)zone;
 + (instancetype)sharedInstance;
-- (id)copyWithZone:(NSZone *)zone;
 
 
 @end

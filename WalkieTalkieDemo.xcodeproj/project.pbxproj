@@ -10,6 +10,9 @@
 		9263CC5D38AEE3E7F759315C /* Pods_WalkieTalkieDemoTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85ED8BDEF49245CADBF3AA81 /* Pods_WalkieTalkieDemoTests.framework */; };
 		A408504128BF061400A141E4 /* IPSettingVC.m in Sources */ = {isa = PBXBuildFile; fileRef = A408504028BF061400A141E4 /* IPSettingVC.m */; };
 		A408504628BF4A2900A141E4 /* IPSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = A408504528BF4A2900A141E4 /* IPSetting.m */; };
+		A4A752FD28C1AAFC0027AD93 /* IPAddressValidate.m in Sources */ = {isa = PBXBuildFile; fileRef = A4A752FC28C1AAFC0027AD93 /* IPAddressValidate.m */; };
+		A4A7530028C1AB570027AD93 /* DeviceIPAddress.m in Sources */ = {isa = PBXBuildFile; fileRef = A4A752FF28C1AB570027AD93 /* DeviceIPAddress.m */; };
+		A4A7530328C1B4E80027AD93 /* ZWAlignLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = A4A7530228C1B4E80027AD93 /* ZWAlignLabel.m */; };
 		A4ED62D728AA29C6000F08B1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A4ED62D628AA29C6000F08B1 /* AppDelegate.m */; };
 		A4ED62DA28AA29C6000F08B1 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A4ED62D928AA29C6000F08B1 /* SceneDelegate.m */; };
 		A4ED62DD28AA29C6000F08B1 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A4ED62DC28AA29C6000F08B1 /* ViewController.m */; };
@@ -57,9 +60,14 @@
 		A408503F28BF061400A141E4 /* IPSettingVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPSettingVC.h; sourceTree = "<group>"; };
 		A408504028BF061400A141E4 /* IPSettingVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IPSettingVC.m; sourceTree = "<group>"; };
 		A408504228BF14A200A141E4 /* UIScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIScreen.h; sourceTree = "<group>"; };
-		A408504328BF48D500A141E4 /* sender.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sender.h; sourceTree = "<group>"; };
 		A408504428BF4A2900A141E4 /* IPSetting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPSetting.h; sourceTree = "<group>"; };
 		A408504528BF4A2900A141E4 /* IPSetting.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IPSetting.m; sourceTree = "<group>"; };
+		A4A752FB28C1AAFC0027AD93 /* IPAddressValidate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPAddressValidate.h; sourceTree = "<group>"; };
+		A4A752FC28C1AAFC0027AD93 /* IPAddressValidate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IPAddressValidate.m; sourceTree = "<group>"; };
+		A4A752FE28C1AB570027AD93 /* DeviceIPAddress.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceIPAddress.h; sourceTree = "<group>"; };
+		A4A752FF28C1AB570027AD93 /* DeviceIPAddress.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviceIPAddress.m; sourceTree = "<group>"; };
+		A4A7530128C1B4E80027AD93 /* ZWAlignLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZWAlignLabel.h; sourceTree = "<group>"; };
+		A4A7530228C1B4E80027AD93 /* ZWAlignLabel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZWAlignLabel.m; sourceTree = "<group>"; };
 		A4ED62D228AA29C6000F08B1 /* WalkieTalkieDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WalkieTalkieDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4ED62D528AA29C6000F08B1 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A4ED62D628AA29C6000F08B1 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -133,11 +141,24 @@
 			children = (
 				A408503F28BF061400A141E4 /* IPSettingVC.h */,
 				A408504028BF061400A141E4 /* IPSettingVC.m */,
-				A408504328BF48D500A141E4 /* sender.h */,
 				A408504428BF4A2900A141E4 /* IPSetting.h */,
 				A408504528BF4A2900A141E4 /* IPSetting.m */,
 			);
 			path = MoreSetting;
+			sourceTree = "<group>";
+		};
+		A4A752FA28C1AA8B0027AD93 /* ToolKit */ = {
+			isa = PBXGroup;
+			children = (
+				A408504228BF14A200A141E4 /* UIScreen.h */,
+				A4A752FB28C1AAFC0027AD93 /* IPAddressValidate.h */,
+				A4A752FC28C1AAFC0027AD93 /* IPAddressValidate.m */,
+				A4A752FE28C1AB570027AD93 /* DeviceIPAddress.h */,
+				A4A752FF28C1AB570027AD93 /* DeviceIPAddress.m */,
+				A4A7530128C1B4E80027AD93 /* ZWAlignLabel.h */,
+				A4A7530228C1B4E80027AD93 /* ZWAlignLabel.m */,
+			);
+			path = ToolKit;
 			sourceTree = "<group>";
 		};
 		A4ED62C928AA29C6000F08B1 = {
@@ -165,6 +186,7 @@
 		A4ED62D428AA29C6000F08B1 /* WalkieTalkieDemo */ = {
 			isa = PBXGroup;
 			children = (
+				A4A752FA28C1AA8B0027AD93 /* ToolKit */,
 				A408503E28BF05F100A141E4 /* MoreSetting */,
 				A4ED631628ABB797000F08B1 /* Tabs */,
 				A4ED631128AB9590000F08B1 /* UIColor+Hex */,
@@ -180,7 +202,6 @@
 				A4ED62E328AA29C7000F08B1 /* LaunchScreen.storyboard */,
 				A4ED62E628AA29C7000F08B1 /* Info.plist */,
 				A4ED62E728AA29C7000F08B1 /* main.m */,
-				A408504228BF14A200A141E4 /* UIScreen.h */,
 			);
 			path = WalkieTalkieDemo;
 			sourceTree = "<group>";
@@ -533,11 +554,14 @@
 			files = (
 				A408504128BF061400A141E4 /* IPSettingVC.m in Sources */,
 				A4ED631E28ABB916000F08B1 /* ChannelVC.m in Sources */,
+				A4A7530028C1AB570027AD93 /* DeviceIPAddress.m in Sources */,
 				A4ED62DD28AA29C6000F08B1 /* ViewController.m in Sources */,
 				A4ED631428AB95E5000F08B1 /* UIColor+Hex.m in Sources */,
+				A4A7530328C1B4E80027AD93 /* ZWAlignLabel.m in Sources */,
 				A408504628BF4A2900A141E4 /* IPSetting.m in Sources */,
 				A4ED62D728AA29C6000F08B1 /* AppDelegate.m in Sources */,
 				A4ED62E828AA29C7000F08B1 /* main.m in Sources */,
+				A4A752FD28C1AAFC0027AD93 /* IPAddressValidate.m in Sources */,
 				A4ED62DA28AA29C6000F08B1 /* SceneDelegate.m in Sources */,
 				A4ED631B28ABB8FB000F08B1 /* WorldVC.m in Sources */,
 			);

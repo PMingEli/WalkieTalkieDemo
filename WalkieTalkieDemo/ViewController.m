@@ -8,26 +8,11 @@
 #import "ViewController.h"
 #import "UIColor+Hex/UIColor+Hex.h"
 #import "MoreSetting/IPSettingVC.h"
+#import "ToolKit/DeviceIPAddress.h"
 
 #import <SystemConfiguration/CaptiveNetwork.h>
 @import SBWatcher;
 
-
-#import <ifaddrs.h>
-#import <arpa/inet.h>
-#import <sys/sockio.h>
-#import <sys/ioctl.h>
-//
-#include <sys/socket.h> // Per msqr
-#include <sys/sysctl.h>
-#include <net/if.h>
-#include <net/if_dl.h>
-
-#define IOS_CELLULAR    @"pdp_ip0"
-#define IOS_WIFI        @"en0"
-//#define IOS_VPN       @"utun0"
-#define IP_ADDR_IPv4    @"ipv4"
-#define IP_ADDR_IPv6    @"ipv6"
 #define maxData 9206
 
 
@@ -196,14 +181,15 @@
     UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"more"] style:UIBarButtonItemStylePlain target:self action:@selector(gotoSetting)];
     self.navigationItem.rightBarButtonItem = item;
     
-    NSString* ip = [self getIPAddress:YES];
+//    NSString* ip = [self getIPAddress:YES];
+    NSString* ipAdderss = [DeviceIPAddress sharedInstance].ipAdderss;
     
     self.deviceIP = [[UILabel alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/5, SCREEN_HEIGHT-37-50, SCREEN_WIDTH*3/5, 50)];
     [self.view addSubview:self.deviceIP];
     self.deviceIP.font = [UIFont systemFontOfSize:20];
     self.deviceIP.textAlignment = NSTextAlignmentCenter;
     self.deviceIP.enabled = NO;
-    self.deviceIP.text = [@"本机IP：" stringByAppendingString:ip];
+    self.deviceIP.text = [@"本机IP：" stringByAppendingString:ipAdderss];
     
     self.impactHeavy = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleHeavy];
     
@@ -246,26 +232,6 @@
         self.player = nil;
         return;
     }
-    //    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
-    //    dispatch_sync(queue, ^{
-    //        [self stopRecording];
-    //        if(self.player.duration<1){
-    //            [self showToast:@"说话时间太短"];
-    //            self.player = nil;
-    //            return;
-    //        }
-    //    });
-    //TODO:发送音频
-    //暂存录音文件路径
-    //    NSString *wavRecordFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"WAVtemporaryRadio.wav"];
-    //    NSString *amrRecordFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"AMRtemporaryRadio.amr"];
-    
-    //重点:把wav录音文件转换成amr文件,用于网络传输.amr文件大小是wav文件的十分之一左右
-    //    [EMVoiceConverter wavToAmr:wavRecordFilePath amrSavePath:amrRecordFilePath];
-    //wave_file_to_amr_file([wavRecordFilePath cStringUsingEncoding:NSUTF8StringEncoding],[amrRecordFilePath cStringUsingEncoding:NSUTF8StringEncoding], 1, 16);
-    
-    //返回amr音频文件Data,用于传输或存储
-    //    NSData *cacheAudioData = [NSData dataWithContentsOfFile:amrRecordFilePath];
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
     dispatch_sync(queue, ^{
         NSURL* fileURL = [NSURL URLWithString:[NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.m4a"]];
@@ -437,67 +403,6 @@
     [self dismissViewControllerAnimated:YES completion:^{
         //
     }];
-}
-
-//获取ip地址
-//获取设备当前网络IP地址
-- (NSString *)getIPAddress:(BOOL)preferIPv4
-{
-    NSArray *searchArray = preferIPv4 ?
-    @[ /*IOS_VPN @"/" IP_ADDR_IPv4, IOS_VPN @"/" IP_ADDR_IPv6,*/ IOS_WIFI @"/" IP_ADDR_IPv4, IOS_WIFI @"/" IP_ADDR_IPv6, IOS_CELLULAR @"/" IP_ADDR_IPv4, IOS_CELLULAR @"/" IP_ADDR_IPv6 ] :
-    @[ /*IOS_VPN @"/" IP_ADDR_IPv6, IOS_VPN @"/" IP_ADDR_IPv4,*/ IOS_WIFI @"/" IP_ADDR_IPv6, IOS_WIFI @"/" IP_ADDR_IPv4, IOS_CELLULAR @"/" IP_ADDR_IPv6, IOS_CELLULAR @"/" IP_ADDR_IPv4 ] ;
-    
-    NSDictionary *addresses = [self getIPAddresses];
-    NSLog(@"addresses: %@", addresses);
-    
-    __block NSString *address;
-    [searchArray enumerateObjectsUsingBlock:^(NSString *key, NSUInteger idx, BOOL *stop)
-     {
-        address = addresses[key];
-        if(address) *stop = YES;
-    } ];
-    return address ? address : @"0.0.0.0";
-}
-
-//获取所有相关IP信息
-- (NSDictionary *)getIPAddresses
-{
-    NSMutableDictionary *addresses = [NSMutableDictionary dictionaryWithCapacity:8];
-    
-    // retrieve the current interfaces - returns 0 on success
-    struct ifaddrs *interfaces;
-    if(!getifaddrs(&interfaces)) {
-        // Loop through linked list of interfaces
-        struct ifaddrs *interface;
-        for(interface=interfaces; interface; interface=interface->ifa_next) {
-            if(!(interface->ifa_flags & IFF_UP) /* || (interface->ifa_flags & IFF_LOOPBACK) */ ) {
-                continue; // deeply nested code harder to read
-            }
-            const struct sockaddr_in *addr = (const struct sockaddr_in*)interface->ifa_addr;
-            char addrBuf[ MAX(INET_ADDRSTRLEN, INET6_ADDRSTRLEN) ];
-            if(addr && (addr->sin_family==AF_INET || addr->sin_family==AF_INET6)) {
-                NSString *name = [NSString stringWithUTF8String:interface->ifa_name];
-                NSString *type;
-                if(addr->sin_family == AF_INET) {
-                    if(inet_ntop(AF_INET, &addr->sin_addr, addrBuf, INET_ADDRSTRLEN)) {
-                        type = IP_ADDR_IPv4;
-                    }
-                } else {
-                    const struct sockaddr_in6 *addr6 = (const struct sockaddr_in6*)interface->ifa_addr;
-                    if(inet_ntop(AF_INET6, &addr6->sin6_addr, addrBuf, INET6_ADDRSTRLEN)) {
-                        type = IP_ADDR_IPv6;
-                    }
-                }
-                if(type) {
-                    NSString *key = [NSString stringWithFormat:@"%@/%@", name, type];
-                    addresses[key] = [NSString stringWithUTF8String:addrBuf];
-                }
-            }
-        }
-        // Free memory
-        freeifaddrs(interfaces);
-    }
-    return [addresses count] ? addresses : nil;
 }
 
 - (void)udpSocket:(GCDAsyncUdpSocket *)sock didNotSendDataWithTag:(long)tag dueToError:(NSError *)error{

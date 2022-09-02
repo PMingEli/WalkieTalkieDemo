@@ -6,7 +6,9 @@
 //
 
 #import "IPSettingVC.h"
-#import "../UIScreen.h"
+#import "../ToolKit/UIScreen.h"
+#import "../ToolKit/IPAddressValidate.h"
+#import "../ToolKit/ZWAlignLabel.h"
 @import SYAlertController;
 
 @interface IPSettingVC ()
@@ -32,26 +34,47 @@
 }
 
 - (void)createUI{
-    self.inputTargetIP = [[UITextField alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/5, SCREEN_HEIGHT/5, SCREEN_WIDTH*3/5, 50)];
+    ZWAlignLabel* ipLabel = [[ZWAlignLabel alloc] initWithFrame:CGRectMake(10, SCREEN_HEIGHT/5, SCREEN_WIDTH*2/5-30, 50)];
+    ipLabel.text = @"目标IP地址:";
+    [ipLabel textAlign:^(ZWMaker *maker) {
+        maker.right().center();
+    }];
+    [self.view addSubview:ipLabel];
+    
+    self.inputTargetIP = [[UITextField alloc] initWithFrame:CGRectMake(SCREEN_WIDTH*2/5, SCREEN_HEIGHT/5, SCREEN_WIDTH*3/5-10, 50)];
     self.inputTargetIP.text = [IPSetting sharedInstance].targetIP;
     self.inputTargetIP.font = [UIFont fontWithName:@"wawati sc" size:45];
     self.inputTargetIP.borderStyle = UITextBorderStyleRoundedRect;
     self.inputTargetIP.placeholder = @"请输入目标IP";
-    self.inputTargetIP.clearsOnBeginEditing = YES;
+//    self.inputTargetIP.clearsOnBeginEditing = YES;
     
-    self.inputLocalPort = [[UITextField alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/5, SCREEN_HEIGHT/5+100, SCREEN_WIDTH*3/5, 50)];
+    ZWAlignLabel* localPortLabel = [[ZWAlignLabel alloc] initWithFrame:CGRectMake(10, SCREEN_HEIGHT/5+100, SCREEN_WIDTH*2/5-30, 50)];
+    localPortLabel.text = @"本地端口:";
+    [localPortLabel textAlign:^(ZWMaker *maker) {
+        maker.right().center();
+    }];
+    [self.view addSubview:localPortLabel];
+    
+    self.inputLocalPort = [[UITextField alloc] initWithFrame:CGRectMake(SCREEN_WIDTH*2/5, SCREEN_HEIGHT/5+100, SCREEN_WIDTH*3/5-10, 50)];
     self.inputLocalPort.text = [IPSetting sharedInstance].localPort;
     self.inputLocalPort.font = [UIFont fontWithName:@"wawati sc" size:45];
     self.inputLocalPort.borderStyle = UITextBorderStyleRoundedRect;
     self.inputLocalPort.placeholder = @"请输入本地端口";
-    self.inputLocalPort.clearsOnBeginEditing = YES;
+//    self.inputLocalPort.clearsOnBeginEditing = YES;
     
-    self.inputRemotePort = [[UITextField alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/5, SCREEN_HEIGHT/5+200, SCREEN_WIDTH*3/5, 50)];
+    ZWAlignLabel* remotePortLabel = [[ZWAlignLabel alloc] initWithFrame:CGRectMake(10, SCREEN_HEIGHT/5+200, SCREEN_WIDTH*2/5-30, 50)];
+    remotePortLabel.text = @"远程端口:";
+    [remotePortLabel textAlign:^(ZWMaker *maker) {
+        maker.right().center();
+    }];
+    [self.view addSubview:remotePortLabel];
+    
+    self.inputRemotePort = [[UITextField alloc] initWithFrame:CGRectMake(SCREEN_WIDTH*2/5, SCREEN_HEIGHT/5+200, SCREEN_WIDTH*3/5-10, 50)];
     self.inputRemotePort.text = [IPSetting sharedInstance].remotePort;
     self.inputRemotePort.font = [UIFont fontWithName:@"wawati sc" size:45];
     self.inputRemotePort.borderStyle = UITextBorderStyleRoundedRect;
     self.inputRemotePort.placeholder = @"请输入远程端口";
-    self.inputRemotePort.clearsOnBeginEditing = YES;
+//    self.inputRemotePort.clearsOnBeginEditing = YES;
     
     self.confirmBtn = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH*2/5, SCREEN_HEIGHT*4/5, SCREEN_WIDTH/5, 40)];
     [self.confirmBtn setTitle:@"确认" forState:UIControlStateNormal];
@@ -64,26 +87,31 @@
 
 - (void) sender:(UIButton*)btn{
     IPSetting* ip = [IPSetting sharedInstance];
-    if([self isIPV4Validate:self.inputTargetIP.text]){
+    if([[IPAddressValidate sharedInstance] isIPV4Validate:self.inputTargetIP.text]){
         NSLog(@"输入正确，IP地址为:%@",self.inputTargetIP.text);
         ip.targetIP = self.inputTargetIP.text;
-        ip.localPort = self.inputLocalPort.text;
-        ip.remotePort = self.inputRemotePort.text;
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"IPSettingChanged" object:nil];
+        if(![self.inputLocalPort.text isEqual:@""]&&![self.inputRemotePort.text isEqual:@""]){
+            ip.localPort = self.inputLocalPort.text;
+            ip.remotePort = self.inputRemotePort.text;
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"IPSettingChanged" object:nil];
+            
+            SYAlertController *alert = [SYAlertController alertControllerWithTitle:@"" message:@"设置成功" image:@"complete"];
+            [self presentViewController:alert animated:YES completion:^{
+                [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(dismissAlertController) userInfo:nil repeats:NO];
+            }];
+        }else{
+            SYAlertController *alert = [SYAlertController alertControllerWithTitle:@"" message:@"端口不能为空或输入错误，请重新输入" image:@"warning"];
+            [self presentViewController:alert animated:YES completion:^{
+                [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(dismissAlertController) userInfo:nil repeats:NO];
+            }];
+        }
     }else{
         SYAlertController *alert = [SYAlertController alertControllerWithTitle:@"" message:@"目标IP地址有误，请重新输入" image:@"warning"];
         [self presentViewController:alert animated:YES completion:^{
             [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(dismissAlertController) userInfo:nil repeats:NO];
         }];
     }
-}
-
--(BOOL)isIPV4Validate:(NSString *)str
-{
-    NSString *regex = @"^(?:(?:1[0-9][0-9]\.)|(?:2[0-4][0-9]\.)|(?:25[0-5]\.)|(?:[1-9][0-9]\.)|(?:[0-9]\.)){3}(?:(?:1[0-9][0-9])|(?:2[0-4][0-9])|(?:25[0-5])|(?:[1-9][0-9])|(?:[0-9]))$";
-    NSPredicate *ipv4Regx = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",regex];
-    return [ipv4Regx evaluateWithObject:str];
 }
 
 - (void)dismissAlertController {

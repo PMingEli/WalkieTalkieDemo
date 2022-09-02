@@ -12,29 +12,15 @@
 
 @implementation IPSetting
 
-static id _instance;
-
-+ (instancetype)allocWithZone:(struct _NSZone *)zone{
-    @synchronized (self) {
-        if(_instance == nil){
-            _instance = [super allocWithZone: zone];
-        }
-    }
-    return _instance;
-}
-
 + (instancetype)sharedInstance{
-    @synchronized(self) {
-        if (_instance == nil) {
-            _instance = [[self alloc] init];
+    static IPSetting *instance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken,^{
+        if(instance == nil){
+            instance = [[IPSetting alloc] init];
         }
-    }
-    return _instance;
-}
-
-- (id)copyWithZone:(NSZone *)zone
-{
-    return _instance;
+    });
+    return instance;
 }
 
 @end
