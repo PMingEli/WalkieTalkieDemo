@@ -48,6 +48,8 @@
 
 @property (nonatomic, strong) NSMutableDictionary* remoteData;
 
+@property (nonatomic, strong) NSString* audioStatus;
+
 @end
 
 @implementation ViewController
@@ -60,6 +62,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    [self checkAudioStatus];
     //注册观察者
     [[SBWatcherManager shareManager] registWatcher];
     
@@ -71,6 +75,48 @@
     
     self.udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(IPSettingChanged) name:@"IPSettingChanged" object:nil];
+}
+
+- (void) checkAudioStatus{
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
+    switch (authStatus) {
+        case AVAuthorizationStatusNotDetermined:
+            {//没有询问是否开启麦克风
+                self.audioStatus = @"AVAuthorizationStatusNotDetermined";
+                //麦克风权限(一些操作需要回到主线程进行)
+                [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio completionHandler:^(BOOL granted)
+                 {
+                    if (!granted) {
+                        self.audioStatus = @"AVAuthorizationStatusDenied";
+                    }else{
+                        self.audioStatus = @"AVAuthorizationStatusAuthorized";
+                    }
+                }];
+            }
+            break;
+        case AVAuthorizationStatusRestricted:
+            //未授权，家长限制
+            self.audioStatus = @"AVAuthorizationStatusRestricted";
+            break;
+        case AVAuthorizationStatusDenied:
+            //玩家未授权
+            self.audioStatus = @"AVAuthorizationStatusDenied";
+            break;
+        case AVAuthorizationStatusAuthorized:
+            //玩家授权
+            self.audioStatus = @"AVAuthorizationStatusAuthorized";
+            break;
+        default:
+            break;
+    }
+}
+
+- (BOOL)isAudioAuth{
+    if([self.audioStatus isEqual:@"AVAuthorizationStatusAuthorized"]){
+        return YES;
+    }else{
+        return NO;
+    }
 }
 
 - (void)setUpAudioObjects
@@ -101,15 +147,11 @@
 - (void)setUpAudioSession
 {
     self.session = [AVAudioSession sharedInstance];
-    
     [self.session setCategory:AVAudioSessionCategorySoloAmbient error:nil];
-    
     [self.session setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
     UInt32 doChangeDefaultRoute = 1;
     //设置扬声器播放，不然默认是听筒
     [self.session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
-    //    AudioSessionSetProperty (kAudioSessionProperty_OverrideCategoryDefaultToSpeaker,
-    //                             sizeof(doChangeDefaultRoute), &doChangeDefaultRoute);
     NSError* error;
     [self.session setPreferredIOBufferDuration:doChangeDefaultRoute error: &error];
 }
@@ -117,7 +159,6 @@
 - (void)setUpRecorder
 {
     NSURL *fileURL = [NSURL URLWithString:[NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.m4a"]];
-    //    NSString *wavRecordFilePath = [NSTemporaryDirectory()stringByAppendingPathComponent:@"WAVtemporaryRadio.wav"];
     self.recorder = [[AVAudioRecorder alloc] initWithURL:fileURL
                                                 settings:[self getRecordSettingsDictionary]
                                                    error:nil];
@@ -136,23 +177,13 @@
 
 - (NSDictionary *)getRecordSettingsDictionary
 {
-    //    AudioChannelLayout channelLayout;
-    //    memset(&channelLayout, 0, sizeof(AudioChannelLayout));
-    //    channelLayout.mChannelLayoutTag = kAudioChannelLayoutTag_Stereo;
     return @{AVFormatIDKey: @(kAudioFormatMPEG4AAC),
              AVSampleRateKey: @44100,
              AVNumberOfChannelsKey: @1,
              AVLinearPCMBitDepthKey:@8,
              AVEncoderAudioQualityKey:@(AVAudioQualityLow),
              AVEncoderBitRateKey: @128000,
-             //             AVChannelLayoutKey: [NSData dataWithBytes:&channelLayout
-             //                                                length:sizeof(AudioChannelLayout)]
     };
-    //    return @{ AVSampleRateKey        : @8000.0,                      // 采样率
-    //              AVFormatIDKey          : @(kAudioFormatLinearPCM),     // 音频格式
-    //              AVLinearPCMBitDepthKey : @16,                          // 采样位数 默认 16
-    //              AVNumberOfChannelsKey  : @1                            // 通道的数目
-    //    };
 }
 
 - (void)createUI {
@@ -201,20 +232,24 @@
 // 按钮按下事件
 - (void)btnTouchDownClick:(UIButton *)sender
 {
-    NSArray* files = [self allFilesAtPath:NSTemporaryDirectory()];
-    for(id file in files){
-        [[NSFileManager defaultManager] removeItemAtPath:file error:nil];
+    if([self isAudioAuth]){
+        NSArray* files = [self allFilesAtPath:NSTemporaryDirectory()];
+        for(id file in files){
+            [[NSFileManager defaultManager] removeItemAtPath:file error:nil];
+        }
+        [_impactHeavy prepare];
+        [_impactHeavy impactOccurred];
+        [self.inputVoice setImage:[UIImage imageNamed:@"voiceInput_s"] forState:UIControlStateHighlighted];
+        [self.inputVoice setBackgroundColor:[UIColor colorWithHexString:@"#f6f6f6" alpha:0.6]];
+        //    [self.mainView inputVoiceSelected];
+        NSLog(@"按钮按下事件");
+        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+        dispatch_sync(queue, ^{
+            [self startRecording];
+        });
+    }else{
+        [self showAudioAuthAlertView];
     }
-    [_impactHeavy prepare];
-    [_impactHeavy impactOccurred];
-    [self.inputVoice setImage:[UIImage imageNamed:@"voiceInput_s"] forState:UIControlStateHighlighted];
-    [self.inputVoice setBackgroundColor:[UIColor colorWithHexString:@"#f6f6f6" alpha:0.6]];
-    //    [self.mainView inputVoiceSelected];
-    NSLog(@"按钮按下事件");
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
-    dispatch_sync(queue, ^{
-        [self startRecording];
-    });
 }
 
 // 按钮抬起事件
@@ -452,42 +487,49 @@
         str = [str stringByReplacingOccurrencesOfString:@"a" withString:@""];
         
         NSArray* array = [str componentsSeparatedByString:@"-"];
-        int num = [array[1] integerValue];
+        NSInteger num = [array[1] integerValue];
         NSData *audioData = [data subdataWithRange:NSMakeRange(10, data.length-10)];
         
-        NSString *aacPlayerFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[array[0] stringByAppendingString:@".m4a"]];
+        NSString *tempFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:array[0]];
+        NSString *aacPlayerFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.m4a"];
         
-        [audioData writeToFile:aacPlayerFilePath atomically:YES];
+        [audioData writeToFile:tempFilePath atomically:YES];
         
         NSArray* files = [self allFilesAtPath:NSTemporaryDirectory()];
 
-        if(files.count==num+2){
-            NSLog(@"%@",files);
-            NSMutableData* playData = [[NSMutableData alloc] initWithLength:0];
-            NSArray *array = [files sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2){
-                return [[obj1 lowercaseString] compare:[obj2 lowercaseString]];
-            }];
-            for(id file in array){
-                if([file containsString:@"temp.m4a"]){
-                    continue;
+        if(files.count == num + 1){
+            @synchronized (self) {
+                files = [self allFilesAtPath:NSTemporaryDirectory()];
+                if(files.count == num + 1){
+                    NSMutableData* playData = [[NSMutableData alloc] initWithLength:0];
+                    NSArray *array = [files sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2){
+                        return [[obj1 lowercaseString] compare:[obj2 lowercaseString]];
+                    }];
+                    for(id file in array){
+                        if([file containsString:@"temp.m4a"]){
+                            continue;
+                        }
+                        NSData* tmp = [NSData dataWithContentsOfFile:file];
+                        [playData appendBytes:tmp.bytes length:tmp.length];
+                    }
+                    [playData writeToFile:aacPlayerFilePath atomically:YES];
+                    
+                    
+                    @try {
+                        NSError *error;
+                        self.player = [[AVAudioPlayer alloc] initWithData:playData error:&error];
+                        [self.player prepareToPlay];
+                        [self.player play];
+                    } @catch (NSException *exception) {
+                        NSLog(@"%@",exception);
+                    } @finally {
+                        NSArray* files = [self allFilesAtPath:NSTemporaryDirectory()];
+                        for(id file in files){
+                            [[NSFileManager defaultManager] removeItemAtPath:file error:nil];
+                        }
+                    }
                 }
-                NSData* tmp = [NSData dataWithContentsOfFile:file];
-//                [playData appendData:tmp];
-                [playData appendBytes:tmp.bytes length:tmp.length];
-                NSLog(@"playData的长度为 %lu Byte",playData.length);
             }
-            [playData writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.m4a"] atomically:YES];
-            
-            
-//            [msg writeToFile:aacPlayerFilePath atomically:YES];
-//            [msg setLength:0];
-//
-//            //    NSLog(@"收到数据 [%@:%d] %@", ip, port, s);
-//
-            NSError *error;
-            self.player = [[AVAudioPlayer alloc] initWithData:playData error:&error];
-            [self.player prepareToPlay];
-            [self.player play];
         }
 //    }
 }
@@ -510,6 +552,21 @@
         }
     }
     return array;
+}
+
+-(void)showAudioAuthAlertView{
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:@"WalkieTalkie需要访问您的麦克风。\n请启用麦克风-设置/隐私/麦克风" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        NSLog(@"点击了Cancel");
+        [self dismissAlertController];
+    }];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        NSLog(@"点击了OK");
+        [self dismissAlertController];
+    }];
+    [alertController addAction:cancelAction];
+    [alertController addAction:okAction];
+    [self presentViewController:alertController animated:YES completion:nil];
 }
 
 @end
